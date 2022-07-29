@@ -49,4 +49,30 @@ class Song
     song.save
   end
 
+  def self.new_from_db(arr)
+    Song.new(id: arr[0], name: arr[1], album: arr[2])
+  end
+
+  def self.all
+    sql = 
+    <<-SQL
+    SELECT * FROM songs;
+    SQL
+    songs = DB[:conn].execute(sql)
+    songs.map do |s|
+      Song.new(id:s[0], name: s[1], album: s[2])
+    end
+  end
+
+  def self.find_by_name(name)
+    sql = 
+    <<-SQL
+    SELECT * FROM songs 
+    WHERE 
+    songs.name = "#{name}"
+    SQL
+    song = DB[:conn].execute(sql)[0]
+    self.new_from_db(song)
+  end
+
 end
